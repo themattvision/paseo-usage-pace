@@ -74,7 +74,9 @@ export function pickFooterWindow(
     const window = provider?.windows.find((w) => w.id === config.footer?.windowId);
     if (provider && window) return { provider, window };
   }
-  for (const provider of providers) {
+  // Ordine fisso per nome (Claude, Codex...), così la scelta di default non cambia da sola.
+  const ordered = [...providers].sort((a, b) => a.name.localeCompare(b.name));
+  for (const provider of ordered) {
     if (provider.windows.length === 0) continue;
     const sorted = [...provider.windows].sort(
       (a, b) => (a.durationSec ?? Number.MAX_SAFE_INTEGER) - (b.durationSec ?? Number.MAX_SAFE_INTEGER),

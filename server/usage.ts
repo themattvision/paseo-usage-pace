@@ -168,6 +168,36 @@ function toProvider(entry: z.infer<typeof EntrySchema>): ProviderUsage {
   return { ...base, plan: null, error: message, windows: [] };
 }
 
+// TRAPPOLA: quando Paseo non riesce a leggere un provider (es. limite di richieste di Claude)
+// restituisce `lastSuccessful`, che puo' essere piu' vecchio di una lettura gia' vista da noi.
+// SINTOMO: la percentuale oscilla fra due valori (22% poi 20%). Nella stessa finestra di
+// consumo il valore non puo' scendere, quindi teniamo in memoria il massimo gia' visto per
+// ogni finestra (stesso reset, entro 2 minuti) e non mostriamo mai un numero piu' basso.
+const SAME_RESET_TOLERANCE_MS = 2 * 60 * 1000;
+const seen = new Map<string, { usedPct: number; resetsAt: string | null }>();
+
+function sameReset(a: string | null, b: string | null): boolean {
+  if (a === null || b === null) return a === b;
+  const diff = Math.abs(Date.parse(a) - Date.parse(b));
+  return Number.isNaN(diff) ? a === b : diff <= SAME_RESET_TOLERANCE_MS;
+}
+
+function mergeMonotonic(providers: ProviderUsage[]): ProviderUsage[] {
+  return providers.map((provider) => ({
+    ...provider,
+    windows: provider.windows.map((win) => {
+      if (win.usedPct === null) return win;
+      const key = `${provider.id}:${win.id}`;
+      const memory = seen.get(key);
+      if (memory && sameReset(memory.resetsAt, win.resetsAt) && memory.usedPct > win.usedPct) {
+        return { ...win, usedPct: memory.usedPct, remainingPct: Math.max(0, 100 - memory.usedPct) };
+      }
+      seen.set(key, { usedPct: win.usedPct, resetsAt: win.resetsAt });
+      return win;
+    }),
+  }));
+}
+
 async function loadUsage(): Promise<RitmoUsage> {
   const read = await runPaseoUsage();
   if (!read.ok) return fallback(read.error);
@@ -182,7 +212,7 @@ async function loadUsage(): Promise<RitmoUsage> {
   }
 
   const result: RitmoUsage = {
-    providers: entries.map(toProvider),
+    providers: mergeMonotonic(entries.map(toProvider)),
     fetchedAt: new Date().toISOString(),
     stale: false,
     error: null,

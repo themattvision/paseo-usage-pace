@@ -14,7 +14,8 @@ type Theme = PluginScreenProps["theme"];
 
 const MARKER_WIDTH = 3;
 const MARKER_OVERSHOOT = 4;
-const MARGIN_OPACITY = 0.6;
+// Arancione vivo e saturo per il margine (richiesta di Matteo, 15 novembre 2026: "più vivo").
+const MARGIN_COLOR = "#ff8a1f";
 
 interface PaceBarProps {
   usedPct: number;
@@ -54,8 +55,7 @@ function PaceBar({ usedPct, elapsedPct, tone, theme, height = 8 }: PaceBarProps)
               bottom: 0,
               left: `${used}%`,
               width: `${pace - used}%`,
-              backgroundColor: theme.colors.statusWarning,
-              opacity: MARGIN_OPACITY,
+              backgroundColor: MARGIN_COLOR,
             }}
           />
         ) : null}
