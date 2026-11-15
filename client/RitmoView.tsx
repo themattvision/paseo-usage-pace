@@ -312,9 +312,9 @@ export function RitmoView({ theme, layout }: Props) {
               }}
             />
             <Text style={{ flex: 1, color: theme.colors.foregroundMuted, fontSize: 13, lineHeight: 20 }}>
-              La lineetta è dove dovresti essere se consumassi in modo uniforme. Il tratto verde
-              chiaro fra il consumo e la lineetta è il margine che ti resta; arancione o rosso
-              oltre la lineetta è il consumo in eccesso.
+              La lineetta è dove dovresti essere se consumassi in modo uniforme. Il tratto
+              arancione tenue fra il consumo e la lineetta è il margine che ti resta; arancione
+              pieno o rosso oltre la lineetta è il consumo in eccesso.
             </Text>
           </View>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>

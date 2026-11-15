@@ -4,8 +4,8 @@ import type { PaceTone } from "../shared/pace";
 
 // Barra di consumo con lineetta del ritmo, condivisa da riga della sidebar e schermata.
 // Una sola barra (8), tre strati sulla traccia:
-// 1. dietro, il tratto fra il consumo e la lineetta quando si è SOTTO ritmo: verde chiaro,
-//    è il margine che resta;
+// 1. dietro, il tratto fra il consumo e la lineetta quando si è SOTTO ritmo: arancione
+//    attenuato, è il margine che resta (scelta di Matteo, 15 novembre 2026);
 // 2. il riempimento del consumo, verde;
 // 3. sopra ritmo, dalla lineetta al consumo, il colore dell'eccesso (arancione fino a
 //    10 punti, rosso oltre).
@@ -14,7 +14,7 @@ type Theme = PluginScreenProps["theme"];
 
 const MARKER_WIDTH = 3;
 const MARKER_OVERSHOOT = 4;
-const MARGIN_OPACITY = 0.4;
+const MARGIN_OPACITY = 0.6;
 
 interface PaceBarProps {
   usedPct: number;
@@ -54,7 +54,7 @@ function PaceBar({ usedPct, elapsedPct, tone, theme, height = 8 }: PaceBarProps)
               bottom: 0,
               left: `${used}%`,
               width: `${pace - used}%`,
-              backgroundColor: theme.colors.statusSuccess,
+              backgroundColor: theme.colors.statusWarning,
               opacity: MARGIN_OPACITY,
             }}
           />
