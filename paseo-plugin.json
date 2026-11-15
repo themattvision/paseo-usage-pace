@@ -1,0 +1,8 @@
+{
+  "id": "ritmo-consumo",
+  "name": "Ritmo consumo",
+  "media": [],
+  "requirements": {
+    "paseo": ">=0.13.0"
+  }
+}
