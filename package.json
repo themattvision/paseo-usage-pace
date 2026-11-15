@@ -12,6 +12,7 @@
     "OVERVIEW.md",
     "OVERVIEW.*.md",
     "LICENSE",
+    "README.md",
     "index.client.ts",
     "index.client.tsx",
     "index.server.ts",
@@ -19,7 +20,7 @@
     "client/",
     "server/",
     "shared/",
-    "media/"
+    "assets/"
   ],
   "scripts": {
     "typecheck": "tsc --noEmit"

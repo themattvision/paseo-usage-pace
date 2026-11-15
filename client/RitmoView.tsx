@@ -363,21 +363,26 @@ export function RitmoView({ theme, layout }: Props) {
           </Text>
         ) : null}
         <View style={{ gap: 12 }}>
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-            <View
-              style={{
-                width: 3,
-                height: 16,
-                borderRadius: 2,
-                backgroundColor: theme.colors.foreground,
-              }}
-            />
+          {/* Icone in una colonna di 16 allineata alla prima riga del testo (lineHeight 20). */}
+          <View style={{ flexDirection: "row", alignItems: "flex-start", gap: 8 }}>
+            <View style={{ width: 16, height: 20, alignItems: "center", justifyContent: "center" }}>
+              <View
+                style={{
+                  width: 3,
+                  height: 16,
+                  borderRadius: 2,
+                  backgroundColor: theme.colors.foreground,
+                }}
+              />
+            </View>
             <Text style={{ flex: 1, color: theme.colors.foregroundMuted, fontSize: 13, lineHeight: 20 }}>
               {t("explain.bar")}
             </Text>
           </View>
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-            <Icon name="Pin" size={16} color={theme.colors.foregroundMuted} />
+          <View style={{ flexDirection: "row", alignItems: "flex-start", gap: 8 }}>
+            <View style={{ width: 16, height: 20, alignItems: "center", justifyContent: "center" }}>
+              <Icon name="Pin" size={16} color={theme.colors.foregroundMuted} />
+            </View>
             <Text style={{ flex: 1, color: theme.colors.foregroundMuted, fontSize: 13, lineHeight: 20 }}>
               {choice
                 ? t("explain.pinNow", {
