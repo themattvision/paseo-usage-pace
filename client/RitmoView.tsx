@@ -312,9 +312,10 @@ export function RitmoView({ theme, layout }: Props) {
               }}
             />
             <Text style={{ flex: 1, color: theme.colors.foregroundMuted, fontSize: 13, lineHeight: 20 }}>
-              La barra parte piena e si svuota man mano che consumi. La lineetta è dove dovresti
-              essere se consumassi in modo uniforme. Verde chiaro oltre la lineetta è il vantaggio
-              che hai; arancione o rosso fra la tua barra e la lineetta è il consumo in eccesso.
+              La barra parte piena e si svuota man mano che consumi. La lineetta è dove dovrebbe
+              arrivare la barra, a questo punto del tempo, se consumassi in modo uniforme. Se la
+              barra supera la lineetta sei in vantaggio; se finisce prima, il tratto arancione o
+              rosso è il consumo di troppo.
             </Text>
           </View>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>

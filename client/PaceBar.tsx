@@ -7,17 +7,15 @@ import type { PaceTone } from "../shared/pace";
 // La lineetta nera sta dove dovresti avere ancora a quel punto della finestra se consumassi
 // in modo uniforme: 100 meno il tempo trascorso.
 // Strati sulla traccia, tutti ancorati a sinistra:
-// - verde: il rimanente reale, fino alla lineetta;
-// - se hai PIU' rimanente della lineetta (sotto ritmo): il tratto in più è verde chiaro, è
-//   il vantaggio che hai accumulato;
-// - se hai MENO rimanente della lineetta (sopra ritmo): il tratto mancante fra il tuo
-//   rimanente e la lineetta ha il colore dell'eccesso (arancione fino a 10 punti, rosso oltre).
-// Mai colorare di arancione il vantaggio: sembrerebbe consumo (vedi CLAUDE.md).
+// - verde pieno: tutto il rimanente reale, senza sfumature (un verde spento a metà barra
+//   si leggeva come "roba che non c'è più", screenshot di Matteo delle 22:42);
+// - vantaggio: la barra supera la lineetta, non serve nessun colore in più;
+// - svantaggio (hai MENO rimanente della lineetta): il tratto mancante fra il tuo rimanente
+//   e la lineetta ha il colore dell'eccesso (arancione fino a 10 punti, rosso oltre).
 type Theme = PluginScreenProps["theme"];
 
 const MARKER_WIDTH = 3;
 const MARKER_OVERSHOOT = 4;
-const SURPLUS_OPACITY = 0.45;
 
 interface PaceBarProps {
   /** Percentuale consumata, da 0 a 100. */
@@ -33,9 +31,8 @@ function PaceBar({ usedPct, elapsedPct, tone, theme, height = 8 }: PaceBarProps)
   const remaining = 100 - Math.min(100, Math.max(0, usedPct));
   const hasPace = elapsedPct !== null;
   const paceRemaining = hasPace ? 100 - (elapsedPct as number) : 0;
-  const surplus = hasPace && remaining > paceRemaining;
   const deficit = hasPace && remaining < paceRemaining;
-  const solidEnd = surplus ? paceRemaining : remaining;
+  const solidEnd = remaining;
   const deficitColor = tone === "danger" ? theme.colors.statusDanger : theme.colors.statusWarning;
 
   return (
@@ -52,19 +49,6 @@ function PaceBar({ usedPct, elapsedPct, tone, theme, height = 8 }: PaceBarProps)
           backgroundColor: theme.colors.border,
         }}
       >
-        {surplus ? (
-          <View
-            style={{
-              position: "absolute",
-              top: 0,
-              bottom: 0,
-              left: `${paceRemaining}%`,
-              width: `${remaining - paceRemaining}%`,
-              backgroundColor: theme.colors.statusSuccess,
-              opacity: SURPLUS_OPACITY,
-            }}
-          />
-        ) : null}
         {deficit ? (
           <View
             style={{

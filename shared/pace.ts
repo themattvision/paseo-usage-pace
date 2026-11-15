@@ -35,7 +35,7 @@ export function paceFor(
       elapsedPct,
       diffPct,
       tone: "ok",
-      text: `${Math.round(-diffPct)}% sotto ritmo (tempo trascorso ${elapsedRounded}%)`,
+      text: `${Math.round(-diffPct)}% di vantaggio sul ritmo (tempo trascorso ${elapsedRounded}%)`,
     };
   }
   const tone: PaceTone = diffPct > 10 ? "danger" : "warning";
@@ -43,7 +43,7 @@ export function paceFor(
     elapsedPct,
     diffPct,
     tone,
-    text: `${Math.round(diffPct)}% sopra ritmo (tempo trascorso ${elapsedRounded}%)`,
+    text: `${Math.round(diffPct)}% di troppo rispetto al ritmo (tempo trascorso ${elapsedRounded}%)`,
   };
 }
 
