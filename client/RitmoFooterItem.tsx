@@ -17,12 +17,16 @@ import { pickFooterWindow, useNow, useRitmoConfig, useRitmoUsage, windowTag } fr
 const ICON_SIZE = 20; // stessa misura delle icone delle altre righe della sidebar
 const TAP_TARGET = 44;
 
-/** Orario del rinnovo: "00:00" se è oggi, altrimenti con il giorno ("sab 00:00"). */
-function formatResetClock(resetsAt: string, nowMs: number): string {
+const SHORT_WINDOW_SEC = 24 * 60 * 60;
+
+/**
+ * Orario del rinnovo. Finestre brevi (fino a 24 ore, come la sessione da 5 ore): solo l'ora
+ * ("00:00"), il giorno è ovvio. Finestre lunghe (settimanali): con il giorno ("sab 00:00").
+ */
+function formatResetClock(resetsAt: string, durationSec: number | null): string {
   const reset = new Date(resetsAt);
   const time = reset.toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" });
-  const sameDay = reset.toDateString() === new Date(nowMs).toDateString();
-  if (sameDay) return time;
+  if (durationSec !== null && durationSec <= SHORT_WINDOW_SEC) return time;
   const day = reset.toLocaleDateString("it-IT", { weekday: "short" });
   return `${day} ${time}`;
 }
@@ -47,7 +51,7 @@ function RitmoFooterItem({ theme, openScreen }: PluginSidebarItemProps) {
   let detail = "";
   if (win && used !== null) {
     if (!win.resetsAt) detail = windowTag(win);
-    else if (showClock) detail = `alle ${formatResetClock(win.resetsAt, now)}`;
+    else if (showClock) detail = `alle ${formatResetClock(win.resetsAt, win.durationSec)}`;
     else detail = formatRemaining(win.resetsAt, now);
   }
 
