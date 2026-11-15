@@ -25,7 +25,8 @@ function RitmoFooterItem({ theme, openScreen }: PluginSidebarItemProps) {
     win && used !== null
       ? paceFor(Math.max(0, used), win.durationSec ?? 0, win.resetsAt, now)
       : null;
-  const usedLabel = used === null ? "n/d" : `${Math.round(used)}%`;
+  // Si mostra quanto RIMANE (la barra si svuota), non quanto è stato consumato.
+  const usedLabel = used === null ? "n/d" : `${Math.round(Math.max(0, 100 - used))}%`;
   const tag = win ? windowTag(win) : "";
   const providerName = choice?.provider.name ?? "Consumo";
 

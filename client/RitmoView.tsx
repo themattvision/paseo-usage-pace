@@ -110,7 +110,7 @@ function WindowBlock({
             fontVariant: ["tabular-nums"],
           }}
         >
-          {used === null ? "n/d" : `${Math.round(used)}% usato`}
+          {used === null ? "n/d" : `${Math.round(Math.max(0, 100 - used))}% rimasto`}
         </Text>
         <PinButton
           pinned={pinned}
@@ -312,9 +312,9 @@ export function RitmoView({ theme, layout }: Props) {
               }}
             />
             <Text style={{ flex: 1, color: theme.colors.foregroundMuted, fontSize: 13, lineHeight: 20 }}>
-              La lineetta è dove dovresti essere se consumassi in modo uniforme. Il tratto
-              grigio chiaro fra il consumo e la lineetta è il margine che ti resta; arancione o
-              rosso oltre la lineetta è il consumo in eccesso.
+              La barra parte piena e si svuota man mano che consumi. La lineetta è dove dovresti
+              essere se consumassi in modo uniforme. Verde chiaro oltre la lineetta è il vantaggio
+              che hai; arancione o rosso fra la tua barra e la lineetta è il consumo in eccesso.
             </Text>
           </View>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
