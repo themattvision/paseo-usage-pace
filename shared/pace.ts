@@ -1,17 +1,17 @@
 // Calcolo del ritmo di consumo. Funzioni pure: nessuna rete, nessun DOM, nessun React Native.
+// Non producono testo per l'utente: le frasi le scrive il client con le traduzioni (client/i18n.ts).
 
 export type PaceTone = "ok" | "warning" | "danger";
 
 export interface PaceResult {
   /** Dove dovresti essere se consumassi in modo uniforme nella finestra, da 0 a 100. Null senza resetsAt. */
   elapsedPct: number | null;
-  /** Percentuale usata meno elapsedPct. */
+  /** Percentuale usata meno elapsedPct. Negativa o zero vuol dire in vantaggio. */
   diffPct: number | null;
   tone: PaceTone | null;
-  text: string | null;
 }
 
-const NONE: PaceResult = { elapsedPct: null, diffPct: null, tone: null, text: null };
+const NONE: PaceResult = { elapsedPct: null, diffPct: null, tone: null };
 
 function clamp(value: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, value));
@@ -29,25 +29,15 @@ export function paceFor(
   const remainingSec = (resetMs - nowMs) / 1000;
   const elapsedPct = clamp(((durationSec - remainingSec) / durationSec) * 100, 0, 100);
   const diffPct = usedPct - elapsedPct;
-  const elapsedRounded = Math.round(elapsedPct);
-  if (diffPct <= 0) {
-    return {
-      elapsedPct,
-      diffPct,
-      tone: "ok",
-      text: `${Math.round(-diffPct)}% di vantaggio sul ritmo (tempo trascorso ${elapsedRounded}%)`,
-    };
-  }
+  if (diffPct <= 0) return { elapsedPct, diffPct, tone: "ok" };
   const tone: PaceTone = diffPct > 10 ? "danger" : "warning";
-  return {
-    elapsedPct,
-    diffPct,
-    tone,
-    text: `${Math.round(diffPct)}% di troppo rispetto al ritmo (tempo trascorso ${elapsedRounded}%)`,
-  };
+  return { elapsedPct, diffPct, tone };
 }
 
-/** Tempo mancante al reset in forma breve, per esempio "5d 13h", "1h 50m" o "12m". */
+/**
+ * Tempo mancante al reset in forma abbreviata universale, per esempio "5d 13h", "1h 50m" o "12m".
+ * Scelta: d, h, m valgono in tutte le lingue, quindi non servono traduzioni per le unita.
+ */
 export function formatRemaining(resetsAt: string, nowMs: number): string {
   const resetMs = Date.parse(resetsAt);
   if (Number.isNaN(resetMs)) return "";

@@ -1,8 +1,23 @@
 {
-  "id": "ritmo-consumo",
-  "name": "Ritmo consumo",
+  "id": "usage-pace",
+  "name": "Usage Pace",
+  "description": "A better usage meter: remaining-usage bars for every provider with a pace marker, reset countdown and a full usage screen.",
   "media": [],
   "requirements": {
     "paseo": ">=0.13.0"
+  },
+  "translations": {
+    "it": { "name": "Ritmo consumo", "description": "Un misuratore di consumo migliore: barre del rimanente per ogni provider con il segno del ritmo, conto alla rovescia del rinnovo e una schermata completa dell'uso." },
+    "es": { "name": "Ritmo de uso", "description": "Un medidor de uso mejor: barras del uso restante para cada proveedor con marcador de ritmo, cuenta atrás hasta el reinicio y una pantalla completa de uso." },
+    "fr": { "name": "Rythme d'utilisation", "description": "Un meilleur indicateur d'utilisation : barres du quota restant pour chaque fournisseur, repère de rythme, compte à rebours avant la réinitialisation et écran d'utilisation complet." },
+    "de": { "name": "Nutzungstempo", "description": "Eine bessere Nutzungsanzeige: Balken für das verbleibende Kontingent jedes Anbieters mit Tempomarkierung, Countdown bis zum Zurücksetzen und eine vollständige Nutzungsansicht." },
+    "pt": { "name": "Ritmo de uso", "description": "Um medidor de uso melhor: barras do uso restante para cada provedor com marcador de ritmo, contagem regressiva até a renovação e uma tela completa de uso." },
+    "ja": { "name": "利用ペース", "description": "より見やすい利用量メーター。すべてのプロバイダーの残量バーにペースの目安線、リセットまでのカウントダウン、利用状況の全画面表示を備えます。" },
+    "zh-CN": { "name": "用量节奏", "description": "更好的用量仪表：为每个提供商显示剩余用量条，带节奏标记、重置倒计时和完整的用量界面。" },
+    "ko": { "name": "사용 페이스", "description": "더 나은 사용량 미터: 모든 제공자의 남은 사용량 막대에 페이스 표시, 초기화 카운트다운, 전체 사용량 화면을 제공합니다." },
+    "ru": { "name": "Темп использования", "description": "Улучшенный индикатор использования: полосы оставшегося лимита для каждого провайдера с маркером темпа, обратный отсчёт до сброса и полный экран использования." },
+    "nl": { "name": "Gebruikstempo", "description": "Een betere gebruiksmeter: balken met het resterende gebruik per provider, met een tempomarkering, aftellen tot de reset en een volledig gebruiksscherm." },
+    "pl": { "name": "Tempo zużycia", "description": "Lepszy miernik zużycia: paski pozostałego limitu dla każdego dostawcy ze znacznikiem tempa, odliczanie do resetu i pełny ekran zużycia." },
+    "tr": { "name": "Kullanım temposu", "description": "Daha iyi bir kullanım ölçer: her sağlayıcı için kalan kullanım çubukları, tempo işaretçisi, sıfırlanmaya kalan süre ve tam kullanım ekranı." }
   }
 }

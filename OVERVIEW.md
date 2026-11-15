@@ -1,11 +1,39 @@
-Ritmo consumo mostra quanto del limite di Claude hai già usato e se stai andando più piano o più veloce del ritmo uniforme.
+# Usage Pace
 
-In fondo alla sidebar di Paseo c'è una riga compatta, al posto del misuratore integrato: a sinistra l'icona di Claude, poi una barra con la finestra da 5 ore, a destra la percentuale usata e la scritta "5h". Sulla barra una lineetta scura segna dove dovresti essere se consumassi in modo uniforme nelle 5 ore. Se la barra arriva prima della lineetta vai più veloce del previsto, se resta dietro vai più piano. Toccando la riga si apre la schermata completa.
+Usage Pace shows how much of each AI provider usage limit you have left, and whether you are using it faster or slower than an even pace until the reset.
 
-La schermata completa "Ritmo consumo" mostra le barre Session, Weekly e Weekly · Fable, ciascuna con la sua lineetta del ritmo, il tempo mancante al reset e un messaggio su quanto sei sopra o sotto il ritmo. Si trova anche nel Command Center con la voce "Apri Ritmo consumo".
+## How it works
 
-I dati si aggiornano da soli ogni minuto. Se non sono disponibili la riga mostra "n/d" e la schermata spiega cosa fare.
+Paseo already collects usage data for each provider. Usage Pace reads the same data. It does not use any tokens and does not call the providers directly. It reads the data by running the `paseo usage ls` command. It reuses the last reading for 30 seconds, and if a new reading fails it keeps the last good one.
 
-Il plugin legge i consumi di tutti i provider configurati su questo Mac (Claude, Codex e gli altri che Paseo conosce) dalla stessa fonte che usa Paseo per il suo pannello Usage. Non usa nessuna chiave o token e non chiama direttamente Anthropic, quindi non dovrebbe più finire in limite di richieste. I dati restano in memoria per 30 secondi, così più richieste ravvicinate usano la stessa lettura. Se una lettura fallisce, il plugin mostra l'ultimo risultato buono, segnalato come dato vecchio, con il motivo in parole semplici.
+## What it shows
 
-La scelta del footer (quale provider e quale finestra mostrare) si salva in un piccolo file di configurazione sul Mac, sotto la cartella dati del plugin in ~/.paseo. Se il file non c'è, il footer usa la finestra più corta del primo provider.
+- A bar for each usage window. The bar starts full and empties as you use the limit. The filled part is what remains.
+- A pace marker: a thin line on the bar. It marks where the remaining usage would be if you used the limit at an even pace until the reset.
+- The time until the reset, and the exact reset time when you tap the line.
+- A full screen with every provider and every usage window, each with its own bar, pace marker and reset countdown.
+- A line at the bottom of the sidebar with the usage window you choose, its remaining percentage and the time until the reset.
+
+Colors: the remaining part of the bar is green. When you are ahead of the pace, the marker area stays neutral grey. When you are behind the pace, the marker area turns orange if you are up to 10 points behind, and red if you are more than 10 points behind.
+
+## Languages
+
+English, Italian, Spanish, French, German, Portuguese, Japanese, Simplified Chinese, Korean, Russian, Dutch, Polish and Turkish.
+
+## Requirements
+
+- Paseo 0.13.0 or later.
+- The `paseo` command with the `usage ls` subcommand must be found on the PATH, or in `~/.local/bin`, `/opt/homebrew/bin` or `/usr/local/bin`.
+- The built-in usage line in the sidebar shows the same information. To avoid two lines, turn off "Summary in sidebar" in Settings > Usage.
+
+## Known limits
+
+- The translations have not been reviewed by native speakers.
+- If the `paseo` command cannot be run, the plugin shows an error instead of usage data.
+
+## How it differs from the built-in meter
+
+- The built-in meter shows the percentage used, which rises. It does not show whether you are ahead or behind the pace.
+- Usage Pace shows the remaining usage, which falls, with a pace marker that shows whether you are ahead or behind an even pace.
+- Usage Pace shows the time until the reset next to the bar.
+- Usage Pace shows all providers in one place.

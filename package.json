@@ -1,18 +1,25 @@
 {
-  "name": "paseo-ritmo-consumo",
-  "private": true,
-  "version": "0.0.0",
+  "name": "paseo-usage-pace",
+  "description": "A better usage meter: remaining-usage bars for every provider with a pace marker, reset countdown and a full usage screen.",
+  "version": "0.1.0",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/themattvision/paseo-usage-pace.git"
+  },
   "files": [
     "paseo-plugin.json",
     "OVERVIEW.md",
     "OVERVIEW.*.md",
+    "LICENSE",
     "index.client.ts",
     "index.client.tsx",
     "index.server.ts",
     "index.server.tsx",
     "client/",
     "server/",
-    "shared/"
+    "shared/",
+    "media/"
   ],
   "scripts": {
     "typecheck": "tsc --noEmit"

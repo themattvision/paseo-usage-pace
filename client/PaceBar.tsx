@@ -3,13 +3,13 @@ import { View } from "react-native";
 import type { PaceTone } from "../shared/pace";
 
 // Barra del consumo RIMANENTE (come una batteria): parte piena a sinistra e si svuota verso
-// lo zero man mano che consumi (richiesta di Matteo, 15 novembre 2026).
+// lo zero man mano che consumi (richiesta dell'utente, 15 novembre 2026).
 // La lineetta nera sta dove dovresti avere ancora a quel punto della finestra se consumassi
 // in modo uniforme: 100 meno il tempo trascorso.
 // Strati sulla traccia, tutti ancorati a sinistra:
-// - verde pieno: tutto il rimanente reale, senza sfumature (un verde spento a metà barra
-//   si leggeva come "roba che non c'è più", screenshot di Matteo delle 22:42);
-// - vantaggio: la barra supera la lineetta, non serve nessun colore in più;
+// - verde pieno: tutto il rimanente reale, senza sfumature (un verde spento a meta barra
+//   si leggeva come "roba che non c'e' piu'", screenshot dell'utente delle 22:42);
+// - vantaggio: la barra supera la lineetta, non serve nessun colore in piu';
 // - svantaggio (hai MENO rimanente della lineetta): il tratto mancante fra il tuo rimanente
 //   e la lineetta ha il colore dell'eccesso (arancione fino a 10 punti, rosso oltre).
 type Theme = PluginScreenProps["theme"];

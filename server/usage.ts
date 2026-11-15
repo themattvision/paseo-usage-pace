@@ -4,11 +4,19 @@
 // Scelta: il plugin non ha un metodo tipizzato nell'SDK per leggere i report di consumo
 // (il metodo listUsage del client e' presente nel runtime ma non e' documentato), quindi
 // si usa il CLI con execFile, senza shell, con timeout e output limitato.
+// Il server non produce testo per l'utente: restituisce codici (RitmoError.code, ProviderUsage.problem).
+// I message sono solo inglese tecnico di ripiego per i log.
 import { execFile } from "node:child_process";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import { z } from "zod";
-import type { ProviderUsage, RitmoError, RitmoUsage, UsageWindow } from "../shared/contract";
+import type {
+  ProviderProblem,
+  ProviderUsage,
+  RitmoError,
+  RitmoUsage,
+  UsageWindow,
+} from "../shared/contract";
 
 const CACHE_TTL_MS = 30_000;
 const COMMAND_TIMEOUT_MS = 10_000;
@@ -21,7 +29,12 @@ const EXTRA_PATH = [
   "/bin",
 ];
 // Il primo percorso che esiste vince; "paseo" da PATH e' l'ultimo fallback.
-const PASEO_CANDIDATES = [join(homedir(), ".local", "bin", "paseo"), "/opt/homebrew/bin/paseo", "/usr/local/bin/paseo", "paseo"];
+const PASEO_CANDIDATES = [
+  join(homedir(), ".local", "bin", "paseo"),
+  "/opt/homebrew/bin/paseo",
+  "/usr/local/bin/paseo",
+  "paseo",
+];
 
 const WindowSchema = z.object({
   id: z.string(),
@@ -89,20 +102,20 @@ function runPaseoUsage(candidates: string[] = PASEO_CANDIDATES): Promise<RunResu
         if (code === "ENOENT") {
           resolve({
             ok: false,
-            error: { code: "not_installed", message: "Paseo non risulta installato su questo Mac." },
+            error: { code: "not_installed", message: "Paseo is not installed on this Mac." },
           });
           return;
         }
         if (error.killed || error.signal === "SIGTERM") {
           resolve({
             ok: false,
-            error: { code: "timeout", message: "Paseo non ha risposto in tempo. Riprova tra poco." },
+            error: { code: "timeout", message: "Paseo did not respond in time." },
           });
           return;
         }
         resolve({
           ok: false,
-          error: { code: "command_failed", message: "Non sono riuscito a leggere i consumi da Paseo." },
+          error: { code: "command_failed", message: "Could not read usage from Paseo." },
         });
       },
     );
@@ -133,18 +146,16 @@ function toWindows(list: z.infer<typeof WindowSchema>[] | null | undefined): Usa
   }));
 }
 
-function describeProblem(report: z.infer<typeof ReportSchema>): string {
+function problemOf(report: z.infer<typeof ReportSchema>): ProviderProblem {
   if (report.status === "unavailable") {
     const kind = report.problem?.kind;
-    if (kind === "expired") return "Accesso scaduto: apri di nuovo il provider per rinnovarlo.";
-    if (kind === "rejected") return "Il provider ha rifiutato l'accesso.";
-    if (kind === "no_quota") return "Nessuna quota disponibile per questo account.";
-    return "Dati non disponibili per questo provider.";
+    if (kind === "expired") return "expired";
+    if (kind === "rejected") return "rejected";
+    if (kind === "no_quota") return "no_quota";
+    return "unavailable";
   }
-  if (/rate.?limit/i.test(report.error ?? "")) {
-    return "Il provider ha chiesto di aspettare: riprova tra poco.";
-  }
-  return "Lettura non riuscita per questo provider. Riprova più tardi.";
+  if (/rate.?limit/i.test(report.error ?? "")) return "rate_limited";
+  return "read_failed";
 }
 
 function toProvider(entry: z.infer<typeof EntrySchema>): ProviderUsage {
@@ -154,18 +165,25 @@ function toProvider(entry: z.infer<typeof EntrySchema>): ProviderUsage {
   const base = { id: entry.id, name: entry.sourceLabel?.trim() || entry.sourceId, iconSvg: icon };
 
   if (current?.status === "available") {
-    return { ...base, plan: current.planLabel ?? null, error: null, windows: toWindows(current.windows) };
+    return {
+      ...base,
+      plan: current.planLabel ?? null,
+      problem: null,
+      showingLastReading: false,
+      windows: toWindows(current.windows),
+    };
   }
-  const message = current ? describeProblem(current) : "Dati non disponibili per questo provider.";
+  const problem: ProviderProblem = current ? problemOf(current) : "unavailable";
   if (previous?.status === "available") {
     return {
       ...base,
       plan: previous.planLabel ?? null,
-      error: `${message} Mostro i dati dell'ultima lettura riuscita.`,
+      problem,
+      showingLastReading: true,
       windows: toWindows(previous.windows),
     };
   }
-  return { ...base, plan: null, error: message, windows: [] };
+  return { ...base, plan: null, problem, showingLastReading: false, windows: [] };
 }
 
 // TRAPPOLA: quando Paseo non riesce a leggere un provider (es. limite di richieste di Claude)
@@ -205,10 +223,12 @@ async function loadUsage(): Promise<RitmoUsage> {
   let entries: z.infer<typeof ListSchema>;
   try {
     const parsed = ListSchema.safeParse(JSON.parse(read.stdout));
-    if (!parsed.success) return fallback({ code: "bad_output", message: "I dati di Paseo non sono nel formato atteso." });
+    if (!parsed.success) {
+      return fallback({ code: "bad_output", message: "Paseo data is not in the expected format." });
+    }
     entries = parsed.data;
   } catch {
-    return fallback({ code: "bad_output", message: "I dati di Paseo non sono nel formato atteso." });
+    return fallback({ code: "bad_output", message: "Paseo data is not in the expected format." });
   }
 
   const result: RitmoUsage = {

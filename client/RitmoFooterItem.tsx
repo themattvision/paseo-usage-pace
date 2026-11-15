@@ -1,37 +1,40 @@
 import type { PluginSidebarItemProps } from "@getpaseo/plugin/client";
+import { useTranslation } from "@getpaseo/plugin/client";
 import { Icon } from "@getpaseo/plugin/client/ui";
 import { useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import { formatRemaining, paceFor } from "../shared/pace";
+import { messages } from "./i18n";
 import { PaceBar } from "./PaceBar";
 import { pickFooterWindow, useNow, useRitmoConfig, useRitmoUsage, windowTag } from "./useRitmo";
 
 // Riga compatta in fondo alla sidebar: logo del provider scelto, barra del RIMANENTE della
 // finestra scelta con la lineetta del ritmo, percentuale rimasta e, accanto, quanto manca al
 // rinnovo (es. "1h 18m"). Il tocco sulla scritta a destra alterna il tempo che manca e l'orario
-// del rinnovo ("alle 00:00"); il tocco su icona e barra apre la schermata completa.
+// del rinnovo; il tocco su icona e barra apre la schermata completa.
 // La finestra si sceglie nella schermata completa.
 // Misure dalla scala 4/8/12/16: margini 16, gap 12, barra 8, tocco alto almeno 44.
 // Non usa SidebarRow: il suo slot "trailing" non si allarga, quindi la barra restava corta
-// e il testo usciva dal bordo destro (screenshot di Matteo del 15 novembre 2026).
+// e il testo usciva dal bordo destro (screenshot dell'utente del 15 novembre 2026).
 const ICON_SIZE = 20; // stessa misura delle icone delle altre righe della sidebar
 const TAP_TARGET = 44;
 
 const SHORT_WINDOW_SEC = 24 * 60 * 60;
 
 /**
- * Orario del rinnovo. Finestre brevi (fino a 24 ore, come la sessione da 5 ore): solo l'ora
- * ("00:00"), il giorno è ovvio. Finestre lunghe (settimanali): con il giorno ("sab 00:00").
+ * Orario del rinnovo nella lingua dell'app. Finestre brevi (fino a 24 ore, come la sessione da
+ * 5 ore): solo l'ora, il giorno e' ovvio. Finestre lunghe (settimanali): con il giorno.
  */
-function formatResetClock(resetsAt: string, durationSec: number | null): string {
+function formatResetClock(resetsAt: string, durationSec: number | null, locale: string): string {
   const reset = new Date(resetsAt);
-  const time = reset.toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" });
+  const time = reset.toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit" });
   if (durationSec !== null && durationSec <= SHORT_WINDOW_SEC) return time;
-  const day = reset.toLocaleDateString("it-IT", { weekday: "short" });
+  const day = reset.toLocaleDateString(locale, { weekday: "short" });
   return `${day} ${time}`;
 }
 
 function RitmoFooterItem({ theme, openScreen }: PluginSidebarItemProps) {
+  const { t, locale } = useTranslation(messages);
   const usage = useRitmoUsage();
   const { config } = useRitmoConfig();
   const now = useNow(30_000);
@@ -44,15 +47,19 @@ function RitmoFooterItem({ theme, openScreen }: PluginSidebarItemProps) {
     win && used !== null
       ? paceFor(Math.max(0, used), win.durationSec ?? 0, win.resetsAt, now)
       : null;
-  // Si mostra quanto RIMANE (la barra si svuota), non quanto è stato consumato.
-  const remainingLabel = used === null ? "n/d" : `${Math.round(Math.max(0, 100 - used))}%`;
-  const providerName = choice?.provider.name ?? "Consumo";
+  // Si mostra quanto RIMANE (la barra si svuota), non quanto e' stato consumato.
+  const remainingPct = used === null ? null : Math.round(Math.max(0, 100 - used));
+  const remainingLabel = remainingPct === null ? t("common.noData") : `${remainingPct}%`;
+  const providerName = choice?.provider.name ?? t("footer.fallbackProvider");
 
   let detail = "";
   if (win && used !== null) {
     if (!win.resetsAt) detail = windowTag(win);
-    else if (showClock) detail = `alle ${formatResetClock(win.resetsAt, win.durationSec)}`;
-    else detail = formatRemaining(win.resetsAt, now);
+    else if (showClock) {
+      detail = t("footer.atTime", {
+        time: formatResetClock(win.resetsAt, win.durationSec, locale),
+      });
+    } else detail = formatRemaining(win.resetsAt, now);
   }
 
   return (
@@ -67,7 +74,10 @@ function RitmoFooterItem({ theme, openScreen }: PluginSidebarItemProps) {
     >
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel={`Ritmo consumo, ${providerName}, ${remainingLabel} rimasto. Apri i dettagli`}
+        accessibilityLabel={t("footer.label", {
+          provider: providerName,
+          remaining: remainingPct === null ? t("common.noData") : t("common.remaining", { percent: remainingPct }),
+        })}
         onPress={() => openScreen({ screenId: "ritmo" })}
         style={{
           flex: 1,
@@ -95,11 +105,7 @@ function RitmoFooterItem({ theme, openScreen }: PluginSidebarItemProps) {
       </Pressable>
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel={
-          showClock
-            ? "Mostra quanto manca al rinnovo"
-            : "Mostra l'orario del rinnovo"
-        }
+        accessibilityLabel={showClock ? t("footer.showRemaining") : t("footer.showClock")}
         onPress={() => setShowClock((value) => !value)}
         style={{ minHeight: TAP_TARGET, justifyContent: "center" }}
       >

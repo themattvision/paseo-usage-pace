@@ -5,6 +5,7 @@ import {
   ritmoConfigGetRpc,
   ritmoConfigSetRpc,
   ritmoUsageRpc,
+  type ConfigErrorCode,
   type ProviderUsage,
   type RitmoConfig,
   type UsageWindow,
@@ -13,8 +14,8 @@ import {
 // Hook condivisi dalla riga in fondo alla sidebar e dalla schermata completa: stessa
 // chiave di cache, quindi una sola lettura ogni minuto per tutti e due.
 const REFRESH_MS = 60_000;
-const USAGE_KEY = ["ritmo-consumo", "usage"] as const;
-const CONFIG_KEY = ["ritmo-consumo", "config"] as const;
+const USAGE_KEY = ["usage-pace", "usage"] as const;
+const CONFIG_KEY = ["usage-pace", "config"] as const;
 
 export function useRitmoUsage() {
   const fetchUsage = useRpc(ritmoUsageRpc);
@@ -25,6 +26,9 @@ export function useRitmoUsage() {
     staleTime: REFRESH_MS / 2,
   });
 }
+
+/** Errore di salvataggio: codice del server, oppure "save_failed" se la chiamata stessa e' fallita. */
+export type SaveError = ConfigErrorCode | "save_failed";
 
 export function useRitmoConfig() {
   const getConfig = useRpc(ritmoConfigGetRpc);
@@ -41,11 +45,13 @@ export function useRitmoConfig() {
       queryClient.setQueryData(CONFIG_KEY, result);
     },
   });
+  const saveError: SaveError | null =
+    mutation.data?.error?.code ?? (mutation.isError ? "save_failed" : null);
   return {
     config: query.data?.config ?? { footer: null },
     save: (next: RitmoConfig) => mutation.mutate(next),
     saving: mutation.isPending,
-    saveError: mutation.data?.error ?? (mutation.isError ? { message: "Non sono riuscito a salvare la scelta." } : null),
+    saveError,
   };
 }
 
@@ -64,7 +70,7 @@ export interface FooterChoice {
   window: UsageWindow;
 }
 
-/** La finestra scelta da Matteo, altrimenti la più corta del primo provider che ne ha una. */
+/** La finestra scelta dall'utente, altrimenti la piu' corta del primo provider che ne ha una. */
 export function pickFooterWindow(
   providers: readonly ProviderUsage[],
   config: RitmoConfig,
@@ -74,7 +80,7 @@ export function pickFooterWindow(
     const window = provider?.windows.find((w) => w.id === config.footer?.windowId);
     if (provider && window) return { provider, window };
   }
-  // Ordine fisso per nome (Claude, Codex...), così la scelta di default non cambia da sola.
+  // Ordine fisso per nome (Claude, Codex...), cosi' la scelta di default non cambia da sola.
   const ordered = [...providers].sort((a, b) => a.name.localeCompare(b.name));
   for (const provider of ordered) {
     if (provider.windows.length === 0) continue;
