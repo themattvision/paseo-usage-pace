@@ -4,7 +4,7 @@ Usage Pace shows how much of each AI provider usage limit you have left, and whe
 
 ## How it works
 
-Paseo already collects usage data for each provider. Usage Pace reads the same data. It does not use any tokens and does not call the providers directly. It reads the data by running the `paseo usage ls` command. It reuses the last reading for 30 seconds, and if a new reading fails it keeps the last good one.
+Paseo already collects usage data for each provider. Usage Pace reads the same data. It does not read any credentials and does not call the providers directly. It reads the data by running the `paseo usage ls` command. It reuses the last reading for 30 seconds, and if a new reading fails it keeps the last good one.
 
 ## What it shows
 
@@ -14,7 +14,7 @@ Paseo already collects usage data for each provider. Usage Pace reads the same d
 - A full screen with every provider and every usage window, each with its own bar, pace marker and reset countdown.
 - A line at the bottom of the sidebar with the usage window you choose, its remaining percentage and the time until the reset.
 
-Colors: the remaining part of the bar is green. When you are ahead of the pace, the marker area stays neutral grey. When you are behind the pace, the marker area turns orange if you are up to 10 points behind, and red if you are more than 10 points behind.
+Colors: the remaining part of the bar is green. When you are ahead of the pace, the bar runs past the marker and nothing else changes. When you are behind the pace, the gap between the end of your bar and the marker turns orange if you are up to 10 points behind, and red if you are more than 10 points behind.
 
 ## Languages
 

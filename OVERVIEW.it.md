@@ -4,7 +4,7 @@ Ritmo consumo mostra quanto resta di ogni limite di consumo dei provider AI e se
 
 ## Come funziona
 
-Paseo raccoglie già i dati di consumo per ogni provider. Ritmo consumo legge gli stessi dati. Non usa token e non chiama direttamente i provider. Legge i dati eseguendo il comando `paseo usage ls`. Riusa l'ultima lettura per 30 secondi e, se una nuova lettura fallisce, mantiene l'ultima lettura valida.
+Paseo raccoglie già i dati di consumo per ogni provider. Ritmo consumo legge gli stessi dati. Non legge nessuna credenziale e non chiama direttamente i provider. Legge i dati eseguendo il comando `paseo usage ls`. Riusa l'ultima lettura per 30 secondi e, se una nuova lettura fallisce, mantiene l'ultima lettura valida.
 
 ## Cosa mostra
 
@@ -14,7 +14,7 @@ Paseo raccoglie già i dati di consumo per ogni provider. Ritmo consumo legge gl
 - Una schermata completa con tutti i provider e tutte le finestre, ognuna con la sua barra, la sua lineetta e il suo conto alla rovescia.
 - Una riga in fondo alla sidebar con la finestra che scegli, la percentuale rimasta e il tempo al rinnovo.
 
-Colori: la parte rimasta della barra è verde. Quando sei in vantaggio sul ritmo, il tratto del margine resta grigio neutro. Quando sei in svantaggio, il tratto diventa arancione se il ritardo è fino a 10 punti, e rosso se supera i 10 punti.
+Colori: la parte rimasta della barra è verde. Quando sei in vantaggio sul ritmo, la barra supera la lineetta e non cambia altro. Quando sei in svantaggio, il tratto fra la fine della tua barra e la lineetta diventa arancione se lo svantaggio è fino a 10 punti, e rosso se supera i 10 punti.
 
 ## Lingue
 

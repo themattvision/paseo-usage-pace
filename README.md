@@ -7,7 +7,7 @@ A better usage meter for Paseo: remaining-usage bars for every provider with a p
 ## What is different
 
 - The bar shows the remaining usage and empties as you use the limit.
-- The pace marker shows where you should be with an even consumption up to the reset. The marker area turns orange or red only when you are behind the pace.
+- The pace marker shows where you should be with an even consumption up to the reset. When you are behind the pace, the gap between your bar and the marker turns orange or red.
 - The time to the renewal is shown next to the bar. Tap it to see the exact reset time.
 - All providers, and the window you choose to pin at the bottom of the sidebar, are in one place.
 
@@ -25,7 +25,7 @@ English, Italian, Spanish, French, German, Portuguese, Japanese, Simplified Chin
 
 ## How it works
 
-The plugin runs `paseo usage ls --json` and reads the usage data that Paseo already collects for each provider. It does not use any tokens and does not call the providers directly.
+The plugin runs `paseo usage ls --json` and reads the usage data that Paseo already collects for each provider. It does not read any credentials and does not call the providers directly.
 
 ## License
 
