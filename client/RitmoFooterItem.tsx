@@ -6,7 +6,14 @@ import { Pressable, Text, View } from "react-native";
 import { formatRemaining, paceFor } from "../shared/pace";
 import { messages } from "./i18n";
 import { PaceBar } from "./PaceBar";
-import { pickFooterWindow, useNow, useRitmoConfig, useRitmoUsage, windowTag } from "./useRitmo";
+import {
+  pickFooterWindow,
+  useNow,
+  useRitmoConfig,
+  useRitmoRefresh,
+  useRitmoUsage,
+  windowTag,
+} from "./useRitmo";
 
 // Riga compatta in fondo alla sidebar: logo del provider scelto, barra del RIMANENTE della
 // finestra scelta con la lineetta del ritmo, percentuale rimasta e, accanto, quanto manca al
@@ -38,6 +45,7 @@ function RitmoFooterItem({ theme, openScreen }: PluginSidebarItemProps) {
   const usage = useRitmoUsage();
   const { config } = useRitmoConfig();
   const now = useNow(30_000);
+  const { refresh } = useRitmoRefresh();
   const [showClock, setShowClock] = useState(false);
 
   const choice = pickFooterWindow(usage.data?.providers ?? [], config);
@@ -78,7 +86,11 @@ function RitmoFooterItem({ theme, openScreen }: PluginSidebarItemProps) {
           provider: providerName,
           remaining: remainingPct === null ? t("common.noData") : t("common.remaining", { percent: remainingPct }),
         })}
-        onPress={() => openScreen({ screenId: "ritmo" })}
+        onPress={() => {
+          openScreen({ screenId: "ritmo" });
+          // Il refresh parte senza await: non ritarda la schermata.
+          refresh();
+        }}
         style={{
           flex: 1,
           flexDirection: "row",
@@ -106,7 +118,10 @@ function RitmoFooterItem({ theme, openScreen }: PluginSidebarItemProps) {
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={showClock ? t("footer.showRemaining") : t("footer.showClock")}
-        onPress={() => setShowClock((value) => !value)}
+        onPress={() => {
+          setShowClock((value) => !value);
+          refresh();
+        }}
         style={{ minHeight: TAP_TARGET, justifyContent: "center" }}
       >
         <Text

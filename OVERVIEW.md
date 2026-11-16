@@ -13,6 +13,7 @@ Paseo already collects usage data for each provider. Usage Pace reads the same d
 - The time until the reset, and the exact reset time when you tap the line.
 - A full screen with every provider and every usage window, each with its own bar, pace marker and reset countdown.
 - A line at the bottom of the sidebar with the usage window you choose, its remaining percentage and the time until the reset.
+- A refresh button on each provider card reads the usage again right away. Tapping the sidebar line also refreshes it.
 
 Colors: the remaining part of the bar is green. When you are ahead of the pace, the bar runs past the marker and nothing else changes. When you are behind the pace, the gap between the end of your bar and the marker turns orange if you are up to 10 points behind, and red if you are more than 10 points behind.
 

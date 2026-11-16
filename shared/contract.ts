@@ -79,7 +79,8 @@ export type RitmoConfigResult = z.infer<typeof RitmoConfigResultSchema>;
 
 export const ritmoUsageRpc = defineRpc({
   name: "pace.usage",
-  input: z.object({}),
+  // force: lettura manuale, salta la cache di 30 secondi del plugin e chiede a Paseo di rileggere.
+  input: z.object({ force: z.boolean().optional() }),
   output: RitmoUsageSchema,
 });
 

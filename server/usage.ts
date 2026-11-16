@@ -64,26 +64,49 @@ const EntrySchema = z.object({
 });
 const ListSchema = z.array(EntrySchema);
 
-let cached: { expires: number; promise: Promise<RitmoUsage> } | null = null;
+let cached: {
+  startedAt: number;
+  expires: number;
+  pending: boolean;
+  promise: Promise<RitmoUsage>;
+} | null = null;
 let lastGood: RitmoUsage | null = null;
 
+// Una richiesta manuale (force) che arriva entro pochi secondi da una lettura gia' in corso
+// si unisce a quella, per non lanciare due comandi insieme al doppio tocco.
+const FORCE_JOIN_MS = 5_000;
+
 // Richieste simultanee condividono la stessa lettura per 30 secondi.
-export function fetchRitmoUsage(): Promise<RitmoUsage> {
+// force=true salta la cache del plugin e chiede a Paseo una lettura nuova (vedi runPaseoUsage).
+// La lettura nuova sostituisce la cache, cosi' le richieste normali che seguono la riusano.
+export function fetchRitmoUsage(force = false): Promise<RitmoUsage> {
   const now = Date.now();
-  if (cached && cached.expires > now) return cached.promise;
-  const promise = loadUsage();
-  cached = { expires: now + CACHE_TTL_MS, promise };
+  if (cached && !force && cached.expires > now) return cached.promise;
+  // Il join vale solo per una lettura ancora in corso: una lettura gia' finita non e' "in corso".
+  if (cached && force && cached.pending && now - cached.startedAt < FORCE_JOIN_MS) {
+    return cached.promise;
+  }
+  const promise = loadUsage(force);
+  const entry = { startedAt: now, expires: now + CACHE_TTL_MS, pending: true, promise };
+  const settle = () => {
+    entry.pending = false;
+  };
+  promise.then(settle, settle);
+  cached = entry;
   return promise;
 }
 
 type RunResult = { ok: true; stdout: string } | { ok: false; error: RitmoError };
 
-function runPaseoUsage(candidates: string[] = PASEO_CANDIDATES): Promise<RunResult> {
+// `--refresh` (da `paseo usage ls --help`): rilegge l'uso dai provider invece di usare la cache
+// dell'host Paseo. Senza il flag il CLI puo' restituire dati gia' in cache lato Paseo.
+function runPaseoUsage(refresh: boolean, candidates: string[] = PASEO_CANDIDATES): Promise<RunResult> {
   const [bin, ...rest] = candidates;
+  const args = ["usage", "ls", "--json", ...(refresh ? ["--refresh"] : [])];
   return new Promise((resolve) => {
     execFile(
       bin,
-      ["usage", "ls", "--json"],
+      args,
       {
         timeout: COMMAND_TIMEOUT_MS,
         maxBuffer: MAX_OUTPUT_BYTES,
@@ -96,7 +119,7 @@ function runPaseoUsage(candidates: string[] = PASEO_CANDIDATES): Promise<RunResu
         }
         const code = (error as NodeJS.ErrnoException).code;
         if (code === "ENOENT" && rest.length > 0) {
-          resolve(runPaseoUsage(rest));
+          resolve(runPaseoUsage(refresh, rest));
           return;
         }
         if (code === "ENOENT") {
@@ -216,8 +239,8 @@ function mergeMonotonic(providers: ProviderUsage[]): ProviderUsage[] {
   }));
 }
 
-async function loadUsage(): Promise<RitmoUsage> {
-  const read = await runPaseoUsage();
+async function loadUsage(refresh: boolean): Promise<RitmoUsage> {
+  const read = await runPaseoUsage(refresh);
   if (!read.ok) return fallback(read.error);
 
   let entries: z.infer<typeof ListSchema>;

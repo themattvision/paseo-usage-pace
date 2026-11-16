@@ -5,6 +5,7 @@ Plugin Paseo (id runtime `usage-pace`) che mostra il consumo dei provider AI (Cl
 ## Cosa fa
 - Riga in fondo alla sidebar (`addSidebarFooterItem`): logo del provider scelto, barra con lineetta, percentuale e durata (es. "22% 5h"). Al tocco apre la schermata completa.
 - Schermata "Ritmo consumo" (`addScreen` `ritmo`, aprila anche da Cmd+K): una scheda per provider con tutte le finestre, tempo al reset, scritta "N% sopra/sotto ritmo". Il segnaposto accanto a ogni finestra sceglie quale mostrare nella riga in fondo (scelta salvata).
+- Aggiornamento manuale: il pulsante `RefreshCw` nell'intestazione di ogni scheda e il tocco sulla riga in fondo chiamano `pace.usage` con `force: true`, che salta la cache del plugin di 30 secondi e passa `--refresh` a `paseo usage ls`.
 - La riga integrata di Paseo si spegne da Settings, sezione Usage, interruttore "Summary in sidebar" (impostazione dell'app, per dispositivo).
 
 ## Struttura

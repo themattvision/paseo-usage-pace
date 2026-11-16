@@ -13,6 +13,7 @@ Paseo raccoglie già i dati di consumo per ogni provider. Ritmo consumo legge gl
 - Il tempo al rinnovo, e l'orario esatto quando tocchi la riga.
 - Una schermata completa con tutti i provider e tutte le finestre, ognuna con la sua barra, la sua lineetta e il suo conto alla rovescia.
 - Una riga in fondo alla sidebar con la finestra che scegli, la percentuale rimasta e il tempo al rinnovo.
+- Un pulsante di aggiornamento su ogni scheda provider rilegge subito il consumo. Anche toccare la riga in sidebar lo aggiorna.
 
 Colori: la parte rimasta della barra è verde. Quando sei in vantaggio sul ritmo, la barra supera la lineetta e non cambia altro. Quando sei in svantaggio, il tratto fra la fine della tua barra e la lineetta diventa arancione se lo svantaggio è fino a 10 punti, e rosso se supera i 10 punti.
 

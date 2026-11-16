@@ -17,6 +17,9 @@ export const messages = defineTranslations({
         showRemaining: "Show time until reset",
         atTime: "at {{time}}",
       },
+      actions: {
+        refresh: "Refresh usage",
+      },
       common: {
         noData: "n/a",
         remaining: "{{percent}}% left",
@@ -78,6 +81,9 @@ export const messages = defineTranslations({
         showClock: "Mostra l'orario del rinnovo",
         showRemaining: "Mostra quanto manca al rinnovo",
         atTime: "alle {{time}}",
+      },
+      actions: {
+        refresh: "Aggiorna il consumo",
       },
       common: {
         noData: "n/d",
@@ -141,6 +147,9 @@ export const messages = defineTranslations({
         showRemaining: "Mostrar cuánto falta para el reinicio",
         atTime: "a las {{time}}",
       },
+      actions: {
+        refresh: "Actualizar uso",
+      },
       common: {
         noData: "n/d",
         remaining: "{{percent}}% restante",
@@ -202,6 +211,9 @@ export const messages = defineTranslations({
         showClock: "Afficher l'heure de réinitialisation",
         showRemaining: "Afficher le temps avant la réinitialisation",
         atTime: "à {{time}}",
+      },
+      actions: {
+        refresh: "Actualiser l'utilisation",
       },
       common: {
         noData: "n/d",
@@ -265,6 +277,9 @@ export const messages = defineTranslations({
         showRemaining: "Verbleibende Zeit bis zum Zurücksetzen anzeigen",
         atTime: "um {{time}}",
       },
+      actions: {
+        refresh: "Nutzung aktualisieren",
+      },
       common: {
         noData: "k. A.",
         remaining: "{{percent}}% übrig",
@@ -326,6 +341,9 @@ export const messages = defineTranslations({
         showClock: "Mostrar o horário da renovação",
         showRemaining: "Mostrar quanto falta para a renovação",
         atTime: "às {{time}}",
+      },
+      actions: {
+        refresh: "Atualizar uso",
       },
       common: {
         noData: "n/d",
@@ -389,6 +407,9 @@ export const messages = defineTranslations({
         showRemaining: "リセットまでの時間を表示",
         atTime: "{{time}}",
       },
+      actions: {
+        refresh: "利用状況を更新",
+      },
       common: {
         noData: "-",
         remaining: "残り{{percent}}%",
@@ -450,6 +471,9 @@ export const messages = defineTranslations({
         showClock: "显示重置时间",
         showRemaining: "显示距离重置的时间",
         atTime: "{{time}}",
+      },
+      actions: {
+        refresh: "刷新用量",
       },
       common: {
         noData: "暂无",
@@ -513,6 +537,9 @@ export const messages = defineTranslations({
         showRemaining: "초기화까지 남은 시간 표시",
         atTime: "{{time}}",
       },
+      actions: {
+        refresh: "사용량 새로고침",
+      },
       common: {
         noData: "-",
         remaining: "{{percent}}% 남음",
@@ -574,6 +601,9 @@ export const messages = defineTranslations({
         showClock: "Показать время сброса",
         showRemaining: "Показать время до сброса",
         atTime: "в {{time}}",
+      },
+      actions: {
+        refresh: "Обновить данные об использовании",
       },
       common: {
         noData: "н/д",
@@ -637,6 +667,9 @@ export const messages = defineTranslations({
         showRemaining: "Tijd tot vernieuwing tonen",
         atTime: "om {{time}}",
       },
+      actions: {
+        refresh: "Gebruik vernieuwen",
+      },
       common: {
         noData: "n.v.t.",
         remaining: "{{percent}}% over",
@@ -699,6 +732,9 @@ export const messages = defineTranslations({
         showRemaining: "Pokaż czas do odnowienia",
         atTime: "o {{time}}",
       },
+      actions: {
+        refresh: "Odśwież zużycie",
+      },
       common: {
         noData: "b/d",
         remaining: "pozostało {{percent}}%",
@@ -760,6 +796,9 @@ export const messages = defineTranslations({
         showClock: "Sıfırlanma saatini göster",
         showRemaining: "Sıfırlanmaya kalan süreyi göster",
         atTime: "{{time}}",
+      },
+      actions: {
+        refresh: "Kullanımı yenile",
       },
       common: {
         noData: "yok",

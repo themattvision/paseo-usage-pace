@@ -1,5 +1,5 @@
 import { useRpc } from "@getpaseo/plugin/client";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useIsMutating, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import {
   ritmoConfigGetRpc,
@@ -25,6 +25,33 @@ export function useRitmoUsage() {
     refetchInterval: REFRESH_MS,
     staleTime: REFRESH_MS / 2,
   });
+}
+
+const REFRESH_MUTATION_KEY = ["usage-pace", "refresh"] as const;
+
+/**
+ * Lettura manuale: chiede a Paseo di rileggere (force), poi mette il risultato nella stessa
+ * cache di useRitmoUsage, cosi' riga in fondo e schermata si aggiornano insieme.
+ * La chiave della mutation e' condivisa: `refreshing` e il blocco del doppio tocco valgono
+ * anche tra un'istanza e l'altra dell'hook (riga in sidebar e schermata).
+ * Errori: restano i dati attuali, nessun messaggio grezzo.
+ */
+export function useRitmoRefresh() {
+  const fetchUsage = useRpc(ritmoUsageRpc);
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationKey: REFRESH_MUTATION_KEY,
+    mutationFn: () => fetchUsage({ force: true }),
+    onSuccess: (data) => {
+      queryClient.setQueryData(USAGE_KEY, data);
+    },
+  });
+  const refreshing = useIsMutating({ mutationKey: REFRESH_MUTATION_KEY }) > 0;
+  const refresh = () => {
+    if (queryClient.isMutating({ mutationKey: REFRESH_MUTATION_KEY }) > 0) return;
+    mutation.mutate();
+  };
+  return { refresh, refreshing };
 }
 
 /** Errore di salvataggio: codice del server, oppure "save_failed" se la chiamata stessa e' fallita. */

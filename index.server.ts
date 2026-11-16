@@ -4,7 +4,7 @@ import { fetchRitmoUsage } from "./server/usage";
 import { getRitmoConfig, setRitmoConfig } from "./server/config";
 
 export default function contribute(server: PluginServerContext) {
-  server.handle(ritmoUsageRpc, () => fetchRitmoUsage());
+  server.handle(ritmoUsageRpc, (input) => fetchRitmoUsage(input.force ?? false));
   server.handle(ritmoConfigGetRpc, () => getRitmoConfig());
   server.handle(ritmoConfigSetRpc, (input) => setRitmoConfig(input));
   return () => {};

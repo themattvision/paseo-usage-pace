@@ -16,6 +16,7 @@ import {
   pickFooterWindow,
   useNow,
   useRitmoConfig,
+  useRitmoRefresh,
   useRitmoUsage,
   windowTag,
   type SaveError,
@@ -213,12 +214,16 @@ function ProviderCard({
   theme,
   pinnedWindowId,
   onPin,
+  onRefresh,
+  refreshing,
 }: {
   provider: ProviderUsage;
   now: number;
   theme: Theme;
   pinnedWindowId: string | null;
   onPin: (windowId: string) => void;
+  onRefresh: () => void;
+  refreshing: boolean;
 }) {
   const { t } = useTranslation(messages);
   return (
@@ -255,6 +260,26 @@ function ProviderCard({
             </Text>
           </View>
         ) : null}
+        {/* Area di tocco 44x44; il margine negativo la riporta dentro il padding 16 della scheda. */}
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={t("actions.refresh")}
+          accessibilityState={{ disabled: refreshing }}
+          disabled={refreshing}
+          onPress={onRefresh}
+          style={{
+            marginLeft: "auto",
+            marginRight: -12,
+            marginVertical: -12,
+            width: 44,
+            height: 44,
+            alignItems: "center",
+            justifyContent: "center",
+            opacity: refreshing ? 0.4 : 1,
+          }}
+        >
+          <Icon name="RefreshCw" size={20} color={theme.colors.foregroundMuted} />
+        </Pressable>
       </View>
       {provider.problem ? (
         <Text style={{ color: theme.colors.statusWarning, fontSize: 13, lineHeight: 20 }}>
@@ -298,6 +323,7 @@ function Notice({ title, text, theme, action }: { title: string; text: string; t
 export function RitmoView({ theme, layout }: Props) {
   const { t } = useTranslation(messages);
   const usage = useRitmoUsage();
+  const { refresh, refreshing } = useRitmoRefresh();
   const { config, save, saveError } = useRitmoConfig();
   const now = useNow();
 
@@ -320,9 +346,7 @@ export function RitmoView({ theme, layout }: Props) {
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={t("common.retryLabel")}
-      onPress={() => {
-        void usage.refetch();
-      }}
+      onPress={refresh}
       style={{
         alignSelf: "flex-start",
         minHeight: 40,
@@ -350,6 +374,8 @@ export function RitmoView({ theme, layout }: Props) {
             theme={theme}
             pinnedWindowId={choice?.provider.id === provider.id ? choice.window.id : null}
             onPin={(windowId) => save({ footer: { providerId: provider.id, windowId } })}
+            onRefresh={refresh}
+            refreshing={refreshing}
           />
         ))}
         {data?.stale && data.error ? (
@@ -393,12 +419,9 @@ export function RitmoView({ theme, layout }: Props) {
             </Text>
           </View>
         </View>
-        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
-          <Text style={{ color: theme.colors.foregroundMuted, fontSize: 13, lineHeight: 20 }}>
-            {updatedText}
-          </Text>
-          {retryButton}
-        </View>
+        <Text style={{ color: theme.colors.foregroundMuted, fontSize: 13, lineHeight: 20 }}>
+          {updatedText}
+        </Text>
       </>
     );
   } else if (usage.isPending) {
